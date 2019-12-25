@@ -1,11 +1,13 @@
 
 import * as mongoose from 'mongoose';
 
+import {config} from '../../config/config';
+
 
 export const DatabaseProvider = [
     {
       provide: 'DATABASE_CONNECTION',
       useFactory: (): Promise<typeof mongoose> =>
-        mongoose.connect('mongodb://localhost/nest'),
+        mongoose.connect(config.database.connection),
     },
   ];
