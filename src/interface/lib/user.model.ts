@@ -6,13 +6,20 @@ import { Role } from './role.model';
 import { IBaseEntityModel } from './base-entity.model';
 
 export interface IUser extends IBaseEntityModel {
+  email?: string;
   userName?: string;
+  hash?: string;
+
+  firstName?: string;
+  lastName?: string;
   school?: string;
   major?: string;
   degree?: string;
-  email?: string;
+  username?: string;
+  role?: Role;
+  roleId?: string;
+  imageUrl?: string;
 }
-
 
 export interface IUserFindInput extends IBaseEntityModel {
   thirdPartyId?: string;
@@ -27,6 +34,6 @@ export interface IUserFindInput extends IBaseEntityModel {
 }
 
 export interface IUserRegistrationInput {
-	user: IUser;
-	password?: string;
+  email: string;
+  password?: string;
 }

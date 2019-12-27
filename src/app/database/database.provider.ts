@@ -1,8 +1,7 @@
 
 import * as mongoose from 'mongoose';
 
-import {config} from '../../config/config';
-
+import { config } from '../../config/config';
 
 export const DatabaseProvider = [
     {

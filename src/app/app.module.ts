@@ -5,17 +5,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 import { AuthModule, AuthService } from './auth';
-import { UserModule, UserService, User } from './user';
+import { UserModule, UserService } from './user';
+import { RoleModule } from './role/role.module';
 
 @Module({
 	imports: [
 		RouterModule.forRoutes([
-			{ks
+			{
 				path: '',
 				children: [
 					{ path: '/auth', module: AuthModule },
 					{ path: '/user', module: UserModule },
-          { path: '/role', module: RoleModule },
+          		{ path: '/role', module: RoleModule },
           
 				]
 			}
@@ -24,6 +25,6 @@ import { UserModule, UserService, User } from './user';
 	],
 	controllers: [AppController],
 	providers: [AppService],
-	exports: []
+	exports: [],
 })
 export class AppModule {}
