@@ -1,10 +1,36 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { UserService, User } from '../user';
+import { UserService } from '../user';
+import { AuthService } from './auth.service';
+import { CommandHandlers } from './commands/handlers';
+import { CqrsModule } from '@nestjs/cqrs';
+import { RoleService, Role } from '../role';
+import { GoogleStrategy } from './google.strategy';
+import { authenticate } from 'passport';
+import { FacebookStrategy } from './facebook.strategy';
 
 @Module({
-  providers: [AuthService],
+  imports: [ CqrsModule],
   controllers: [AuthController],
+  providers: [
+    AuthService,
+    UserService,
+    RoleService,
+    ...CommandHandlers,
+    GoogleStrategy,
+    FacebookStrategy,
+  ],
+  exports: [AuthService],
 })
-export class AuthModule {}
+export class AuthModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(
+        authenticate('facebook', {
+          session: false,
+          scope: ['email'],
+        }),
+      )
+      .forRoutes('auth/facebook/token');
+  }
+}

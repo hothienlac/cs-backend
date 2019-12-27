@@ -1,6 +1,6 @@
 
-export interface Role {
-    name: ERoles;
+export interface IRole {
+    role: ERoles;
 }
 
 export enum ERoles {

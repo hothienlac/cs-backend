@@ -1,4 +1,14 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 
 @Controller('app')
-export class AppController {}
+export class AppController {
+
+    // tslint:disable-next-line: no-empty
+    constructor() {}
+
+    @Get('hello')
+    getData(): string {
+        return 'Hello';
+    }
+
+}
