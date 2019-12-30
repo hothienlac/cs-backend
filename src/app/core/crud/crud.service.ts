@@ -44,7 +44,7 @@ export abstract class CrudService<T extends Document> implements ICrudService<T>
         return this.findOne({ _id: id }, options);
     }
 
-    public async create(entity: T, ...options: any[]): Promise<T> {
+    public async create(entity: any, ...options: any[]): Promise<T> {
         return await this.model.create(entity);
     }
 

@@ -5,6 +5,10 @@ export { DatabaseModule } from './database.module';
 export { IUser } from './interface/user.interface';
 export { IRole } from './interface/role.interface';
 
+// DTO
+
+export { CreateUserDTO } from './dto/create-user.dto';
+
 // SCHEMA
 
 export { UserSchema } from './schema/user.schema';

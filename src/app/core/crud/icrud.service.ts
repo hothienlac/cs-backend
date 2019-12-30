@@ -12,7 +12,7 @@ export interface ICrudService<T> {
   count(filter?): Promise<number>;
   findAll(filter?): Promise<IPagination<T>>;
   findOne(id, options?): Promise<T>;
-  create(entity: T): Promise<T>;
-  update(id: any, entity: QueryDeepPartialEntity<T>, ...options: ModelUpdateOptions[]): Promise<boolean | T>;
+  create(entity: any): Promise<T>;
+  update( filter, doc, ...options: ModelUpdateOptions[]): Promise<boolean | T>;
   delete(id: any, ...options: any[]): Promise<mongodb.DeleteWriteOpResultObject['result']>;
 }
