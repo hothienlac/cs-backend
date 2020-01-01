@@ -1,7 +1,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { AuthRegisterCommand } from '../auth.register.command';
 import { AuthService } from '../../auth.service';
-import { User } from '@gauzy/models';
+import { IUser } from '@gauzy/models';
 
 @CommandHandler(AuthRegisterCommand)
 export class AuthRegisterHandler implements ICommandHandler<AuthRegisterCommand> {

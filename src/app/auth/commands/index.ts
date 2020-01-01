@@ -1,1 +1,1 @@
-export { AuthRegisterCommand } from './auth.register.command'
+export { AuthRegisterCommand } from './auth.register.command';

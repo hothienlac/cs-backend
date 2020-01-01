@@ -1,21 +1,19 @@
 import { sample } from 'lodash';
-import { User as IUser } from '@gauzy/models';
+import { IUser } from 'src/interface';
 
-namespace Utils {
-    export function generatedLogoColor() {
-        return sample(['#269aff', '#ffaf26', '#8b72ff', '#0ecc9D']).replace(
-            '#',
-            ''
-        );
-    }
+export function generatedLogoColor() {
+    return sample(['#269aff', '#ffaf26', '#8b72ff', '#0ecc9D']).replace(
+        '#',
+        '',
+    );
 }
 
 export const getDummyImage = (
     width: number,
     height: number,
-    letter: string
+    letter: string,
 ) => {
-    return `https://dummyimage.com/${width}x${height}/${Utils.generatedLogoColor()}/ffffff.jpg&text=${letter}`;
+    return `https://dummyimage.com/${width}x${height}/${generatedLogoColor()}/ffffff.jpg&text=${letter}`;
 };
 
 export const getUserDummyImage = (user: IUser) => {
@@ -31,4 +29,4 @@ export const getUserDummyImage = (user: IUser) => {
 
         return getDummyImage(330, 300, firstCityLetter);
     }
-}
+};

@@ -4,13 +4,6 @@
 
 import { NestModule, Module, MiddlewareConsumer } from '@nestjs/common';
 import { RequestContextMiddleware } from './context';
-import { IUser } from '../database';
-import { Role } from '../role';
-
-const entities = [
-    IUser,
-    Role,
-];
 
 @Module({
     imports: [

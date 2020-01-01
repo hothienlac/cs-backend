@@ -7,7 +7,7 @@ import { UserService } from '../user';
 import { IUser } from '../database';
 import { CreateUserDTO } from '../database/';
 import { config } from 'src/config/config';
-import { IUserRegistrationInput } from 'src/interface';
+import { IUserRegistrationInput, ERoles, IUserResetPasswordInput } from 'src/interface';
 
 @Injectable()
 export class AuthService {
@@ -22,22 +22,16 @@ export class AuthService {
     }
 
     async login(
-        findObj: any,
+        email: any,
         password: string,
     ): Promise<{ user: IUser; token: string } | null> {
-        const user = await this.userService.findOne(findObj, {
-            relations: ['role'],
-        });
+        const user = await this.userService.getUserByEmail(email);
 
         if (!user || !(await bcrypt.compare(password, user.hash))) {
             return null;
         }
 
-        const token = sign(
-            { id: user.id, role: user.role ? user.role.role : '' },
-            config.JWT_SECRET,
-            {},
-        ); // Never expires
+        const token = await this.createToken(user);
 
         delete user.hash;
 
@@ -48,27 +42,22 @@ export class AuthService {
     }
 
     async requestPassword(
-        findObj: any,
+        id: string,
     ): Promise<{ id: string; token: string } | null> {
-        const user = await this.userService.findOne(findObj, {
-            relations: ['role'],
-        });
-
-        let token: string;
+        const user = await this.userService.findOneByID(id);
 
         if (user && user.id) {
-            const newToken = await this.createToken(user);
-            token = newToken.token;
+            const token = await this.createToken(user);
 
             if (token) {
-                const url = `${config.host}:4200/#/auth/reset-password?token=${token}&id=${user.id}`;
+                const url = `${config.host}:4200/auth/reset-password?token=${token}&id=${user.id}`;
 
                 const testAccount = await nodemailer.createTestAccount();
 
                 const transporter = nodemailer.createTransport({
                     host: 'smtp.ethereal.email',
-                    port: 587,
-                    secure: false, // true for 465, false for other ports
+                    port: 465,
+                    secure: true, // true for 465, false for other ports
                     auth: {
                         user: testAccount.user,
                         pass: testAccount.pass,
@@ -104,28 +93,33 @@ export class AuthService {
         }
     }
 
-    async resetPassword(findObject) {
-        if (findObject.password.length < 6) {
+    async resetPassword(input: IUserResetPasswordInput) {
+        if (input.password.length < 6) {
             throw new Error('Password should be at least 6 characters long');
         }
 
-        if (findObject.password !== findObject.confirmPassword) {
+        if (input.password !== input.confirmPassword) {
             throw new Error('Passwords must match.');
         }
 
-        if (!findObject.user.id) {
+        if (!input.id) {
             throw new Error('User not found');
         }
 
-        if (!findObject.user.token) {
+        if (!input.token) {
             throw new Error('Authorization token is invalid or missing');
         }
 
-        const hash = await this.getPasswordHash(findObject.password);
-        return this.userService.changePassword(findObject.user.id, hash);
+        if (! (await this.isAuthenticated(input.token)) ) {
+            throw new Error('Authorization token is invalid or missing');
+        }
+
+        const hash = await this.getPasswordHash(input.password);
+        return this.userService.changePassword(input.id, hash);
     }
 
     async register(input: IUserRegistrationInput): Promise<CreateUserDTO> {
+        input.user.role.role = ERoles.USER;
         const user = this.userService.create({
             ...input.user,
             ...(input.password
@@ -140,9 +134,8 @@ export class AuthService {
 
     async isAuthenticated(token: string): Promise<boolean> {
         try {
-            const { id, thirdPartyId } = verify(token, config.JWT_SECRET) as {
+            const { id } = verify(token, config.JWT_SECRET) as {
                 id: string;
-                thirdPartyId: string;
             };
 
             let result: Promise<boolean>;
@@ -175,43 +168,13 @@ export class AuthService {
         }
     }
 
-    async validateOAuthLoginEmail(
-        emails: Array<{ value: string; verified: boolean }>,
-    ): Promise<{
-        success: boolean;
-        authData: { jwt: string; userId: string };
-    }> {
-        let response = {
-            success: false,
-            authData: { jwt: null, userId: null },
-        };
-
-        try {
-            for (const { value } of emails) {
-                const userExist = await this.userService.checkIfExistsEmail(
-                    value,
-                );
-                if (userExist) {
-                    const user = await this.userService.getUserByEmail(value);
-                    const userId = user.id;
-                    const userRole = user.role ? user.role.role : '';
-                    const payload = { id: userId, role: userRole };
-                    const jwt: string = sign(payload, config.JWT_SECRET, {});
-                    response = { success: true, authData: { jwt, userId } };
-                }
-            }
-            return response;
-        } catch (err) {
-            throw new InternalServerErrorException(
-                'validateOAuthLoginEmail',
-                err.message,
-            );
-        }
-    }
-
-    async createToken(user: { id?: string }): Promise<{ token: string }> {
-        const token: string = sign({ id: user.id }, config.JWT_SECRET, {});
-        return { token };
+    async createToken(user: IUser): Promise<string> {
+        const token: string = sign(
+            { id: user.id, role: user.role.role },
+            config.JWT_SECRET,
+            {expiresIn: '30d'},
+        );
+        return token;
     }
 
 }

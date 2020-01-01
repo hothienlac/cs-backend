@@ -17,7 +17,6 @@ export interface IUser extends IBaseEntityModel {
   degree?: string;
   username?: string;
   role?: IRole;
-  roleId?: string;
   imageUrl?: string;
 }
 
@@ -36,4 +35,11 @@ export interface IUserFindInput extends IBaseEntityModel {
 export interface IUserRegistrationInput {
   user: IUser;
   password?: string;
+}
+
+export interface IUserResetPasswordInput {
+  id: string;
+  token: string;
+  password: string;
+  confirmPassword: string;
 }

@@ -54,16 +54,6 @@ export abstract class CrudService<T extends Document> implements ICrudService<T>
 
     public async update( filter, doc, ...options: ModelUpdateOptions[]): Promise<boolean | T> {
         try {
-            // method getPasswordHash is copied from AuthService
-            // try if can import somehow the service and use its method
-
-            if (doc.hash) {
-                const hashPassword = await this.getPasswordHash(
-                    doc.hash,
-                );
-                doc.hash = hashPassword;
-            }
-
             return await this.model.update(filter, doc, options).exec();
         } catch (err /*: WriteError*/) {
             throw new BadRequestException(err);

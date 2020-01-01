@@ -12,7 +12,7 @@ import { IUser } from '../database';
 import { CommandBus } from '@nestjs/cqrs';
 import { AuthRegisterCommand } from './commands';
 import { RequestContext } from '../core/context';
-import { IUserRegistrationInput } from 'src/interface';
+import { IUserRegistrationInput, IUserResetPasswordInput } from 'src/interface';
 import { getUserDummyImage } from '../core';
 
 @Controller()
@@ -56,8 +56,8 @@ export class AuthController {
     }
 
     @Post('/reset-password')
-    async resetPassword(@Body() findObject, ...options: any[]) {
-        return await this.authService.resetPassword(findObject);
+    async resetPassword(@Body() input: IUserResetPasswordInput, ...options: any[]) {
+        return await this.authService.resetPassword(input);
     }
 
     @Post('/request-password')
@@ -65,7 +65,7 @@ export class AuthController {
         @Body() findObj,
         ...options: any[]
     ): Promise<{ id: string; token: string } | null> {
-        return await this.authService.requestPassword(findObj);
+        return await this.authService.requestPassword(findObj.id);
     }
 
 }
