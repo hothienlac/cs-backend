@@ -1,5 +1,5 @@
 import { sample } from 'lodash';
-import { IUser } from 'src/interface';
+import { IUser } from '../../interface';
 
 export function generatedLogoColor() {
     return sample(['#269aff', '#ffaf26', '#8b72ff', '#0ecc9D']).replace(

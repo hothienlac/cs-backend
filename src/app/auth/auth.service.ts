@@ -6,8 +6,8 @@ import * as nodemailer from 'nodemailer';
 import { UserService } from '../user';
 import { IUser } from '../database';
 import { CreateUserDTO } from '../database/';
-import { config } from 'src/config/config';
-import { IUserRegistrationInput, ERoles, IUserResetPasswordInput } from 'src/interface';
+import { config } from '../../config/config';
+import { IUserRegistrationInput, IUserResetPasswordInput } from '../../interface';
 
 @Injectable()
 export class AuthService {
@@ -22,7 +22,7 @@ export class AuthService {
     }
 
     async login(
-        email: any,
+        email: string,
         password: string,
     ): Promise<{ user: IUser; token: string } | null> {
         const user = await this.userService.getUserByEmail(email);
@@ -42,9 +42,9 @@ export class AuthService {
     }
 
     async requestPassword(
-        id: string,
+        email: string,
     ): Promise<{ id: string; token: string } | null> {
-        const user = await this.userService.findOneByID(id);
+        const user = await this.userService.getUserByEmail(email);
 
         if (user && user.id) {
             const token = await this.createToken(user);
@@ -119,7 +119,7 @@ export class AuthService {
     }
 
     async register(input: IUserRegistrationInput): Promise<CreateUserDTO> {
-        input.user.role.role = ERoles.USER;
+        input.user.role = 'USER';
         const user = this.userService.create({
             ...input.user,
             ...(input.password
@@ -170,7 +170,7 @@ export class AuthService {
 
     async createToken(user: IUser): Promise<string> {
         const token: string = sign(
-            { id: user.id, role: user.role.role },
+            { id: user.id, role: user.role },
             config.JWT_SECRET,
             {expiresIn: '30d'},
         );

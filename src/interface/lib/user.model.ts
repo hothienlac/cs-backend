@@ -2,7 +2,6 @@
 // MIT License, see https://github.com/xmlking/ngx-starter-kit/blob/develop/LICENSE
 // Copyright (c) 2018 Sumanth Chinthagunta
 
-import { IRole } from './role.model';
 import { IBaseEntityModel } from './base-entity.model';
 
 export interface IUser extends IBaseEntityModel {
@@ -15,8 +14,7 @@ export interface IUser extends IBaseEntityModel {
   school?: string;
   major?: string;
   degree?: string;
-  username?: string;
-  role?: IRole;
+  role?: string;
   imageUrl?: string;
 }
 
@@ -26,7 +24,7 @@ export interface IUserFindInput extends IBaseEntityModel {
   lastName?: string;
   email?: string;
   username?: string;
-  role?: IRole;
+  role?: string;
   roleId?: string;
   hash?: string;
   imageUrl?: string;

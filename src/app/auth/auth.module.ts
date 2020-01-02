@@ -4,11 +4,17 @@ import { UserService } from '../user';
 import { AuthService } from './auth.service';
 import { CommandHandlers } from './commands/handlers';
 import { CqrsModule } from '@nestjs/cqrs';
-import { RoleService, Role } from '../role';
+import { RoleService } from '../role';
 import { authenticate } from 'passport';
+import { InterfaceModule } from '../../interface';
+import { DatabaseModule } from '../database';
 
 @Module({
-  imports: [ CqrsModule],
+  imports: [
+    CqrsModule,
+    InterfaceModule,
+    DatabaseModule,
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,

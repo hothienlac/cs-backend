@@ -9,23 +9,21 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { IUser } from '../database';
-import { CommandBus } from '@nestjs/cqrs';
 import { AuthRegisterCommand } from './commands';
 import { RequestContext } from '../core/context';
-import { IUserRegistrationInput, IUserResetPasswordInput } from 'src/interface';
+import { IUserRegistrationInput, IUserResetPasswordInput } from '../../interface';
 import { getUserDummyImage } from '../core';
 
 @Controller()
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
-        private readonly commandBus: CommandBus,
     ) {}
 
     @Get('/authenticated')
     async authenticated(): Promise<boolean> {
+        console.log('authenticate');
         const token = RequestContext.currentToken();
-
         return this.authService.isAuthenticated(token);
     }
 
@@ -39,20 +37,20 @@ export class AuthController {
     async create(
         @Body() entity: IUserRegistrationInput,
         ...options: any[]
-    ): Promise<IUser> {
+    ): Promise<any> {
         if (!entity.user.imageUrl) {
             entity.user.imageUrl = getUserDummyImage(entity.user);
         }
-        return this.commandBus.execute(new AuthRegisterCommand(entity));
+        return this.authService.register(entity);
     }
 
     @HttpCode(HttpStatus.OK)
     @Post('/login')
     async login(
-        @Body() { findObj, password },
+        @Body() { email, password },
         ...options: any[]
     ): Promise<{ user: IUser; token: string } | null> {
-        return this.authService.login(findObj, password);
+        return this.authService.login(email, password);
     }
 
     @Post('/reset-password')
@@ -62,10 +60,10 @@ export class AuthController {
 
     @Post('/request-password')
     async requestPass(
-        @Body() findObj,
+        @Body() { email },
         ...options: any[]
     ): Promise<{ id: string; token: string } | null> {
-        return await this.authService.requestPassword(findObj.id);
+        return await this.authService.requestPassword(email);
     }
 
 }

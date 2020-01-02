@@ -18,4 +18,5 @@ export class UserController extends CrudController<IUser> {
   async findById(@Param('id', UUIDValidationPipe) id: string): Promise<IUser> {
     return this.userService.findOne(id);
   }
+
 }

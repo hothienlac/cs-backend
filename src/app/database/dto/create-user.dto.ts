@@ -1,5 +1,3 @@
-import { IRole } from 'src/interface';
-
 export class CreateUserDTO {
     readonly email?: string;
     readonly userName?: string;
@@ -10,9 +8,7 @@ export class CreateUserDTO {
     readonly school?: string;
     readonly major?: string;
     readonly degree?: string;
-    readonly username?: string;
-    readonly role?: IRole;
-    readonly roleId?: string;
+    readonly role?: string;
     readonly imageUrl?: string;
 
     readonly password?: string;

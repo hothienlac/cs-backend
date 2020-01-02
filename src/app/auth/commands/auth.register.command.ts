@@ -1,5 +1,5 @@
 import { ICommand } from '@nestjs/cqrs';
-import { IUserRegistrationInput } from 'src/interface';
+import { IUserRegistrationInput } from '../../../interface';
 
 export class AuthRegisterCommand implements ICommand {
   static readonly type = '[Auth] Register';

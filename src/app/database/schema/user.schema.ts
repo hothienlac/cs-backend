@@ -10,9 +10,7 @@ export const UserSchema = new mongoose.Schema({
   school: String,
   major: String,
   degree: String,
-  username: String,
   role: String,
-  roleId: String,
   imageUrl: String,
 
   createdAt: Date,
