@@ -33,7 +33,7 @@ export class AuthController {
         return this.authService.hasRole(token, roles);
     }
 
-    @Post('/register')
+    @Post('/sign-up')
     async create(
         @Body() entity: IUserRegistrationInput,
         ...options: any[]
@@ -49,7 +49,7 @@ export class AuthController {
     async login(
         @Body() { email, password },
         ...options: any[]
-    ): Promise<{ user: IUser; token: string } | null> {
+    ): Promise<{ token: string } | null> {
         return this.authService.login(email, password);
     }
 
